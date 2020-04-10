@@ -1,0 +1,3 @@
+﻿  main.cpp
+C:\Users\fabrod\Documents\GitHub\Paralelos\Programa Ejemplo Paralelo\Programa Ejemplo Paralelo\main.cpp(46,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Programa Ejemplo Paralelo.vcxproj -> C:\Users\fabrod\Documents\GitHub\Paralelos\Programa Ejemplo Paralelo\x64\Debug\Programa Ejemplo Paralelo.exe
