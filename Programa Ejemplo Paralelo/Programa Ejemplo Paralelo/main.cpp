@@ -3,28 +3,15 @@
 #include <time.h> 
 #include <vector>
 #include <random>
-
+#include <chrono>
 using namespace std;
 
-void RowColMult(vector<vector<int>> matrixA, vector<vector<int>> matrixB, vector<vector<int>>& matrixC, int rowofA, int colofB)
+void RowColMult(vector<vector<int>>& matrixA, vector<vector<int>>& matrixB, vector<vector<int>>& matrixC, int rowofA, int colofB)
 {
-	//rowofA [0 ... matrixA rofs -1]
-	//colofB [0 ... matrixB cols -1]
 	int result = 0;
-	vector<int>fromA;
-	vector<int>fromB;
-	for (int i = 0; i < matrixB.size(); i++) //los elementos de una fila de la matrizA
+	for (int i = 0; i < matrixB.size(); i++)
 	{
-		fromA.push_back(matrixA[rowofA][i]);
-	}
-	for (int i = 0; i < matrixA[0].size(); i++) //los elementos de una calumna de la matrizB
-	{
-		fromB.push_back(matrixB[i][colofB]);
-	}
-
-	for (int i = 0; i < fromA.size(); i++)
-	{
-		result = result + (fromA[i] * fromB[i]);
+		result = result + (matrixA[rowofA][i] * matrixB[i][colofB]);
 	}
 	matrixC[rowofA][colofB] = result;
 }
@@ -46,13 +33,9 @@ int main()
 	srand(time(NULL));
 	int rowA, colsA, rowB, colsB;
 	cout << "rowA: "; cin >> rowA;
-	cout << endl;
 	cout << "colsA: "; cin >> colsA;
-	cout << endl;
 	cout << "rowB: "; cin >> rowB;
-	cout << endl;
 	cout << "colsB: "; cin >> colsB;
-	cout << endl;
 
 	vector<vector<int>> matrixA(rowA, vector<int>(colsA, 0));
 	vector<vector<int>> matrixB(rowB, vector<int>(colsB, 0));
@@ -62,7 +45,7 @@ int main()
 	{
 		for (int j = 0; j < colsA; j++)
 		{
-			matrixA[i][j] = (rand() % 100) + 1;
+			matrixA[i][j] = rand() % (100000 - 90000 + 1) + 90000;
 		}
 	}
 
@@ -70,14 +53,14 @@ int main()
 	{
 		for (int j = 0; j < colsB; j++)
 		{
-			matrixB[i][j] = (rand() % 100) + 1;
+			matrixB[i][j] = rand() % (100000 - 90000 + 1) + 90000;
 		}
 	}
 
-	printmatrix(matrixA, rowA, colsA);
-	cout << endl;
-	printmatrix(matrixB, rowB, colsB);
-	cout << endl;
+	//printmatrix(matrixA, rowA, colsA);
+	//cout << endl;
+	//printmatrix(matrixB, rowB, colsB);
+	//cout << endl;
 	for (int i = 0; i < rowA; i++)
 	{
 		for (int j = 0; j < colsB; j++)
@@ -88,11 +71,12 @@ int main()
 
 	vector<thread> threads; //rowA*colsB
 
+	auto started = std::chrono::high_resolution_clock::now();
 	for (int i = 0; i < rowA; i++)
 	{
 		for (int j = 0; j < colsB; j++)
 		{
-			threads.push_back(thread(RowColMult, matrixA, matrixB, ref(matrixC), i, j));
+			threads.push_back(thread(RowColMult, ref(matrixA), ref(matrixB), ref(matrixC), i, j));
 		}
 	}
 
@@ -101,9 +85,11 @@ int main()
 		threads[i].join();
 	}
 
+	auto done = std::chrono::high_resolution_clock::now();
+	std::cout << "Tiempo en milisegundos en una matriz " << rowA << "x" << colsB << " es : " << std::chrono::duration_cast<std::chrono::milliseconds>(done - started).count() << endl;
 
-	printmatrix(matrixC, rowA, colsB);
-	cout << endl;
+	//printmatrix(matrixC, rowA, colsB);
+	//cout << endl;
 
 	return 0;
 }
